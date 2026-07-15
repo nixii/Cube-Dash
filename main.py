@@ -40,6 +40,7 @@ class Pipe():
         self.y = y
         self.r1 = pygame.Rect(self.x, 0, 80, y - 130)
         self.r2 = pygame.Rect(self.x, y + 130, 80, W_HEIGHT - y - 130)
+        self.counted = False
     def render(self):
         self.r1.x = self.x
         self.r2.x = self.x
@@ -97,6 +98,9 @@ async def main():
             # update pipes
             for p in pipes:
                 p.x -= PIPE_SPEED * dt
+                if p.x < player.x - p.r1.width and not p.counted:
+                    player.x += 40
+                    p.counted = True
     
         ################
         ### Clear screen
