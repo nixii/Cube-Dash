@@ -12,6 +12,23 @@ pygame.init()
 screen = pygame.display.set_mode((W_WIDTH, W_HEIGHT))
 pygame.display.set_caption("Cube Dash")
 ticks = pygame.time.get_ticks()
+fontL = pygame.font.Font('Font.ttf', 64)
+fontS = pygame.font.Font('Font.ttf', 32)
+
+# prerender text
+txt_GameTitle = fontL.render('Cube Dash', True, (255, 255, 255))
+txt_Instructions = [
+    fontS.render(a, True, (255, 255, 255)) for a in [
+        'Your goal is to get to the other',
+        '  side of the screen.',
+        'Tap any button to jump.',
+        'When you pass a pipe, you move',
+        '  forwards.',
+        'Press any key to start!'
+    ]
+]
+txt_YouWin = fontL.render('You have won!', True, (255, 255, 255))
+txt_ReplayInstructions = fontS.render('To replay, press any key.', True, (255, 255, 255))
 
 # Is the app running?
 running = True
@@ -27,7 +44,7 @@ player_x = 0
 died = False
 
 # Game state
-gs = 1
+gs = 2
 
 # "pipes"
 pipes = []
@@ -75,17 +92,17 @@ async def main():
             spawn_pipe()
             pipe_timer = 2
 
+        # input
+        key = False
+        for e in pygame.event.get():
+            if e.type == pygame.QUIT:
+                running = False
+            elif e.type == pygame.KEYDOWN:
+                key = True
+
         #################################
         ### Update if the game is running
         if gs == 1:
-
-            # input
-            key = False
-            for e in pygame.event.get():
-                if e.type == pygame.QUIT:
-                    running = False
-                elif e.type == pygame.KEYDOWN:
-                    key = True
             
             if not died:
                 # gravity
@@ -125,6 +142,21 @@ async def main():
             # Render pipes
             for p in pipes:
                 p.render()
+        
+        ####################
+        ### Render main menu
+        elif gs == 0:
+            screen.blit(txt_GameTitle, (40, 40))
+            i = 0
+            for t in txt_Instructions:
+                screen.blit(t, (40, 108 + 40 * i))
+                i+=1
+        
+        #############
+        ## Win screen
+        elif gs == 2:
+            screen.blit(txt_YouWin, (40, 40))
+            screen.blit(txt_ReplayInstructions, (40, 108))
 
         ###########
         ### Flip and await (since this will run in the browser)
