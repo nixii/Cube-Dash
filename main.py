@@ -87,28 +87,29 @@ async def main():
                 elif e.type == pygame.KEYDOWN:
                     key = True
             
-            # gravity
-            yvel += GRAVITY
+            if not died:
+                # gravity
+                yvel += GRAVITY
 
-            # key press
-            if key:
-                yvel = -500
-            
-            # update position
-            player.y += yvel * dt
+                # key press
+                if key:
+                    yvel = -500
+                
+                # update position
+                player.y += yvel * dt
 
-            # check y death
-            if player.y > W_HEIGHT-20 or player.y < -20:
-                died = True
-
-            # update pipes
-            for p in pipes:
-                p.x -= PIPE_SPEED * dt
-                if p.x < player.x - p.r1.width and not p.counted:
-                    player.x += 40
-                    p.counted = True
-                if p.collides(player):
+                # check y death
+                if player.y > W_HEIGHT-20 or player.y < -20:
                     died = True
+
+                # update pipes
+                for p in pipes:
+                    p.x -= PIPE_SPEED * dt
+                    if p.x < player.x - p.r1.width and not p.counted:
+                        player.x += 40
+                        p.counted = True
+                    if p.collides(player):
+                        died = True
     
         ################
         ### Clear screen
