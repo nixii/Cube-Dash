@@ -28,7 +28,7 @@ txt_Instructions = [
     ]
 ]
 txt_YouWin = fontL.render('You have won!', True, (255, 255, 255))
-txt_ReplayInstructions = fontS.render('To replay, press any key.', True, (255, 255, 255))
+txt_ReplayInstructions = fontS.render('Press any key to restart.', True, (255, 255, 255))
 
 # Is the app running?
 running = True
@@ -44,7 +44,7 @@ player_x = 0
 died = False
 
 # Game state
-gs = 2
+gs = 0
 
 # "pipes"
 pipes = []
@@ -75,7 +75,7 @@ def spawn_pipe():
 
 # Update the game
 async def main():
-    global running, will_dash, key, yvel, ticks, gs, pipe_timer, died
+    global running, will_dash, key, yvel, ticks, gs, pipe_timer, died, player, pipes
 
     # While it is running
     while running:
@@ -103,6 +103,14 @@ async def main():
         #################################
         ### Update if the game is running
         if gs == 1:
+
+            if died and key:
+                gs = 1
+                pipes = []
+                pipe_timer = 0
+                player = pygame.Rect(0, 200, 40, 40)
+                yvel = 0
+                died = False
             
             if not died:
                 # gravity
@@ -127,6 +135,13 @@ async def main():
                         p.counted = True
                     if p.collides(player):
                         died = True
+        
+        if gs == 0:
+            if key:
+                gs = 1
+        if gs == 2:
+            if key:
+                gs = 1
     
         ################
         ### Clear screen
@@ -142,6 +157,10 @@ async def main():
             # Render pipes
             for p in pipes:
                 p.render()
+            
+            # Dead
+            if died:
+                screen.blit(txt_ReplayInstructions, (40, 284))
         
         ####################
         ### Render main menu
