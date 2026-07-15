@@ -7,6 +7,7 @@ screen = pygame.display.set_mode((800, 600))
 running = True
 
 async def main():
+    global running
     while running:
 
         # event handling
