@@ -24,7 +24,7 @@ will_dash = False
 player = pygame.Rect(0, 200, 40, 40)
 yvel = 0
 player_x = 0
-dash_time = 0
+died = False
 
 # Game state
 gs = 1
@@ -46,6 +46,8 @@ class Pipe():
         self.r2.x = self.x
         pygame.draw.rect(screen, (255, 0, 0), self.r1)
         pygame.draw.rect(screen, (255, 0, 0), self.r2)
+    def collides(self,pl)->bool:
+        return pygame.Rect.colliderect(pl,self.r1) or pygame.Rect.colliderect(pl,self.r2)
 
 # spawn a pipe
 def spawn_pipe():
@@ -56,7 +58,7 @@ def spawn_pipe():
 
 # Update the game
 async def main():
-    global running, will_dash, key, yvel, ticks, gs, pipe_timer
+    global running, will_dash, key, yvel, ticks, gs, pipe_timer, died
 
     # While it is running
     while running:
@@ -95,12 +97,18 @@ async def main():
             # update position
             player.y += yvel * dt
 
+            # check y death
+            if player.y > W_HEIGHT-20 or player.y < -20:
+                died = True
+
             # update pipes
             for p in pipes:
                 p.x -= PIPE_SPEED * dt
                 if p.x < player.x - p.r1.width and not p.counted:
                     player.x += 40
                     p.counted = True
+                if p.collides(player):
+                    died = True
     
         ################
         ### Clear screen
